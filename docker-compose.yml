@@ -1,0 +1,33 @@
+services:
+  db:
+    # pgvector build of Postgres: identical to postgres:17 plus the vector
+    # extension, so it's ready for the RAG features later.
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"          # change the left side (e.g. "5433:5432") if 5432 is taken
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U enerlytics -d enerlytics"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build: .
+    env_file: .env
+    environment:
+      # Inside Docker the database host is the service name, not localhost
+      DATABASE_URL: ${DATABASE_URL}
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy   # wait until Postgres accepts connections
+
+volumes:
+  pgdata:
