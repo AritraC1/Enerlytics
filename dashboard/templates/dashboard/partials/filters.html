@@ -1,0 +1,69 @@
+{# Filter panel: selects auto-submit via HTMX and push the filters to the URL. #}
+<section class="filter-card">
+  <div class="filter-card-header">
+    <div class="filter-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+      </svg>
+      <span>Filter Insights Dataset</span>
+    </div>
+
+    <div class="filter-count-badge">
+      {% if has_filters %}Filters Active{% else %}All 1,000 Insights{% endif %}
+    </div>
+  </div>
+
+  <form id="filter-form" method="get" action="{% url 'dashboard:filtered' %}"
+        hx-get="{% url 'dashboard:filtered' %}"
+        hx-target="#dashboard-content"
+        hx-swap="outerHTML"
+        hx-trigger="change from find select delay:150ms, submit"
+        hx-push-url="true">
+    <div class="filter-fields-grid">
+      {% for field in form %}
+        <div class="filter-field-group">
+          <label class="filter-label" for="{{ field.id_for_label }}">
+            {% if field.name == 'sector' %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:var(--primary);">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              </svg>
+            {% elif field.name == 'region' %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:var(--success);">
+                <circle cx="12" cy="12" r="10" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
+              </svg>
+            {% else %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:var(--purple);">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+              </svg>
+            {% endif %}
+            <span>{{ field.label }}</span>
+          </label>
+          {{ field }}
+          {% if field.errors %}
+            <small class="filter-error">{{ field.errors.0 }}</small>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <div class="filter-actions">
+        <button type="submit" class="btn-filter-apply">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+          <span>Apply</span>
+        </button>
+
+        {# Clear: re-request the unfiltered fragment without a full reload. #}
+        <a href="{% url 'dashboard:index' %}" class="btn-filter-clear"
+           hx-get="{% url 'dashboard:filtered' %}" hx-target="#dashboard-content"
+           hx-swap="outerHTML" hx-push-url="/">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+          <span>Reset</span>
+        </a>
+      </div>
+    </div>
+  </form>
+</section>

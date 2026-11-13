@@ -128,6 +128,9 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
+# Project-level static assets (static/js/charts.js etc.) alongside app dirs.
+STATICFILES_DIRS = [BASE_DIR / "static"]
+
 
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration

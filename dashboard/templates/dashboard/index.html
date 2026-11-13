@@ -1,2 +1,26 @@
 {% extends "base.html" %}
-{% block content %}<h1>Enerlytics</h1><p>{{ total }} insights loaded.</p>{% endblock %}
+{% load static %}
+
+{% block title %}Enerlytics — Global Energy Intelligence Dashboard{% endblock %}
+
+{% block content %}
+  <div class="dashboard-page-header">
+    <div class="header-title-group">
+      <h1>Energy &amp; Sustainability Intelligence</h1>
+      <p>Strategic monitoring, risk forecasting, and multi-dimensional analysis across global energy sectors.</p>
+    </div>
+    <div class="header-quick-meta">
+      <span class="topbar-chip">
+        <span class="chip-dot"></span>
+        <span>Real-Time Intelligence</span>
+      </span>
+    </div>
+  </div>
+
+  {# Filter panel + KPIs + charts + table, all refreshable via HTMX. #}
+  {% include "dashboard/partials/dashboard_content.html" %}
+{% endblock %}
+
+{% block scripts %}
+  <script src="{% static 'js/charts.js' %}" defer></script>
+{% endblock %}

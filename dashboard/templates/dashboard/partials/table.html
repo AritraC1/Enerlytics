@@ -1,0 +1,119 @@
+{# Recent insights table for the current filter selection. #}
+<section id="table-section" class="table-card">
+  <div class="table-card-header">
+    <div class="table-header-left">
+      <h2 class="table-title">Recent Insights Explorer</h2>
+      <span id="table-visible-count" class="table-count-chip">
+        Showing {{ shown }} of {{ total }} records {% if has_filters %}<span class="table-filter-tag">(Filtered)</span>{% endif %}
+      </span>
+    </div>
+
+    <div>
+      <input type="text" id="table-quick-search" class="table-search-input" placeholder="Search table rows..." aria-label="Search rows">
+    </div>
+  </div>
+
+  {% if records %}
+    <div class="table-scroll">
+      <table class="insights-table">
+        <thead>
+          <tr>
+            <th>Insight Title</th>
+            <th>Sector</th>
+            <th>Region</th>
+            <th>PESTLE</th>
+            <th style="text-align: center;">Intensity</th>
+            <th style="text-align: center;">Likelihood</th>
+            <th style="text-align: center;">Relevance</th>
+            <th>Published</th>
+          </tr>
+        </thead>
+        <tbody id="insights-table-body">
+          {% for record in records %}
+            <tr>
+              <td class="cell-title" title="{{ record.title }}">
+                <strong>{{ record.title|truncatechars:80 }}</strong>
+              </td>
+              <td>
+                {% if record.sector %}
+                  <span class="badge-pill badge-sector">{{ record.sector }}</span>
+                {% else %}
+                  <span style="color:var(--text-light);">—</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if record.region %}
+                  <span class="badge-pill badge-region">{{ record.region }}</span>
+                {% else %}
+                  <span style="color:var(--text-light);">—</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if record.pestle %}
+                  <span class="badge-pill badge-pestle">{{ record.pestle }}</span>
+                {% else %}
+                  <span style="color:var(--text-light);">—</span>
+                {% endif %}
+              </td>
+              <td style="text-align: center;">
+                {% if record.intensity != None %}
+                  {% if record.intensity >= 7 %}
+                    <span class="metric-badge metric-high" title="High Intensity (≥7)">{{ record.intensity }}</span>
+                  {% elif record.intensity >= 4 %}
+                    <span class="metric-badge metric-mid" title="Medium Intensity">{{ record.intensity }}</span>
+                  {% else %}
+                    <span class="metric-badge metric-low" title="Low Intensity">{{ record.intensity }}</span>
+                  {% endif %}
+                {% else %}
+                  <span style="color:var(--text-light);">—</span>
+                {% endif %}
+              </td>
+              <td style="text-align: center;">
+                {% if record.likelihood != None %}
+                  <span style="font-weight: 600; color: var(--cyan);">{{ record.likelihood }}</span>
+                  <span style="font-size: 0.72rem; color: var(--text-light);">/5</span>
+                {% else %}
+                  <span style="color:var(--text-light);">—</span>
+                {% endif %}
+              </td>
+              <td style="text-align: center;">
+                {% if record.relevance != None %}
+                  <span style="font-weight: 600; color: var(--indigo);">{{ record.relevance }}</span>
+                  <span style="font-size: 0.72rem; color: var(--text-light);">/5</span>
+                {% else %}
+                  <span style="color:var(--text-light);">—</span>
+                {% endif %}
+              </td>
+              <td style="color: var(--text-muted); font-size: 0.82rem;">
+                {{ record.published|date:"M d, Y"|default:"—" }}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="table-empty-state">
+      <div class="table-empty-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <p style="font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.25rem;">
+        {% if has_filters %}No matching insights found{% else %}No insights in the database{% endif %}
+      </p>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+        {% if has_filters %}
+          Try adjusting or clearing your filters to see more results.
+        {% else %}
+          Load your data using <code>python manage.py import_insights</code>.
+        {% endif %}
+      </p>
+      {% if has_filters %}
+        <a href="{% url 'dashboard:index' %}" class="btn-filter-clear"
+           hx-get="{% url 'dashboard:filtered' %}" hx-target="#dashboard-content"
+           hx-swap="outerHTML" hx-push-url="/">Clear All Filters</a>
+      {% endif %}
+    </div>
+  {% endif %}
+</section>
