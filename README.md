@@ -1,7 +1,4 @@
-<div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-    <img src="static/images/favicon-2.png" alt="Logo" width="50" height="50" />
-    <h2 >Enerlytics - Global Energy & Sustainability Intelligence Dashboard</h2>
-</div>
+# Enerlytics - Global Energy & Sustainability Intelligence Dashboard
 
 Enerlytics is a **web-based business intelligence dashboard project** that analyzes global energy and environmental insights across sectors, regions, and risk dimensions.
 
