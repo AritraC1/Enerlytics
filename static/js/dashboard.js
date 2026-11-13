@@ -6,6 +6,7 @@
   "use strict";
 
   var STORAGE_KEY = "enerlytics_sidebar_collapsed";
+  var THEME_KEY = "enerlytics_theme";
   var MOBILE_BREAKPOINT = 768;
 
   function initSidebar() {
@@ -139,6 +140,60 @@
     });
   }
 
+  // Light / Dark mode toggle (sun = light, moon = dark; default: light).
+  // The new theme does not switch instantly — it slides in from the toggler
+  // as a circular reveal anchored at the button (View Transitions API), with
+  // an instant fallback for browsers that don't support it.
+  function initThemeToggle() {
+    var btn = document.getElementById("theme-toggle-btn");
+    if (!btn) return;
+
+    function currentTheme() {
+      return document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
+    }
+
+    function reflectState() {
+      var isDark = currentTheme() === "dark";
+      btn.setAttribute("aria-pressed", isDark ? "true" : "false");
+      btn.title = isDark ? "Switch to light mode" : "Switch to dark mode";
+    }
+
+    function applyTheme(next) {
+      document.documentElement.setAttribute("data-theme", next);
+      try {
+        localStorage.setItem(THEME_KEY, next);
+      } catch (e) {}
+      reflectState();
+    }
+
+    btn.addEventListener("click", function (e) {
+      e.preventDefault();
+      var next = currentTheme() === "dark" ? "light" : "dark";
+
+      // Anchor the slide-in reveal at the toggler itself
+      var rect = btn.getBoundingClientRect();
+      var x = rect.left + rect.width / 2 + window.scrollX;
+      var y = rect.top + rect.height / 2 + window.scrollY;
+      document.documentElement.style.setProperty("--theme-toggle-x", x + "px");
+      document.documentElement.style.setProperty("--theme-toggle-y", y + "px");
+
+      function change() {
+        applyTheme(next);
+        // Charts read theme colors at render time — re-render them with the
+        // new palette while still inside the transition's update callback.
+        window.dispatchEvent(new CustomEvent("theme-change", { detail: { theme: next } }));
+      }
+
+      if (typeof document.startViewTransition === "function") {
+        document.startViewTransition(change);
+      } else {
+        change();
+      }
+    });
+
+    reflectState();
+  }
+
   // Real-time table search/filter
   function initTableSearch() {
     var searchInput = document.getElementById("table-quick-search");
@@ -223,6 +278,7 @@
   // Initialize on page load
   document.addEventListener("DOMContentLoaded", function () {
     initSidebar();
+    initThemeToggle();
     initTableSearch();
     initExportCsv();
   });

@@ -1443,3 +1443,206 @@ button {
   }
 }
 
+/* ==========================================================================
+   Light / Dark Mode Toggler (sun = light, moon = dark; default: light)
+   ========================================================================== */
+
+.theme-toggle-btn {
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  flex-shrink: 0;
+  overflow: hidden;
+  position: relative;
+  transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease,
+    box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.theme-toggle-btn:hover {
+  color: var(--warning);
+  border-color: var(--warning-border);
+  background: var(--warning-light);
+  box-shadow: var(--shadow-sm);
+}
+
+.theme-toggle-btn:active {
+  transform: scale(0.92);
+}
+
+.theme-icon {
+  width: 17px;
+  height: 17px;
+  position: absolute;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+}
+
+/* Light mode: moon is hidden (rotated away); sun sits centered */
+.icon-moon {
+  transform: translateY(140%) rotate(-90deg);
+  opacity: 0;
+}
+
+/* Dark mode: sun rotates away, moon slides in */
+html[data-theme="dark"] .icon-sun {
+  transform: translateY(-140%) rotate(90deg);
+  opacity: 0;
+}
+
+html[data-theme="dark"] .icon-moon {
+  transform: translateY(0) rotate(0deg);
+  opacity: 1;
+}
+
+html[data-theme="dark"] .theme-toggle-btn {
+  color: #fbbf24;
+  border-color: var(--warning-border);
+  background: var(--warning-light);
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.25);
+}
+
+/* ==========================================================================
+   Theme Slide-In — the new mode slides in from the toggler as a circular
+   reveal anchored at the toggle button (View Transitions API). Fallback
+   browsers just switch instantly.
+   ========================================================================== */
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* Old theme stays underneath while the new theme is revealed on top */
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 2;
+  animation: theme-slide-in 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes theme-slide-in {
+  from {
+    clip-path: circle(0px at var(--theme-toggle-x, 100%) var(--theme-toggle-y, 32px));
+  }
+  to {
+    clip-path: circle(150vmax at var(--theme-toggle-x, 100%) var(--theme-toggle-y, 32px));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}
+
+/* ==========================================================================
+   Dark Mode Design System — variable overrides only; the whole UI already
+   consumes these custom properties.
+   ========================================================================== */
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Color Palette */
+  --bg-canvas: #0b1120;
+  --bg-surface: #111a2e;
+  --bg-surface-alt: #1a2439;
+  --bg-surface-hover: #1a2439;
+
+  /* Borders */
+  --border-color: #28344a;
+  --border-subtle: #1c2739;
+  --border-strong: #3a4a66;
+
+  /* Typography Colors */
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-light: #64748b;
+
+  /* Brand Accents */
+  --primary: #3b82f6;
+  --primary-hover: #60a5fa;
+  --primary-light: #16233f;
+  --primary-border: #1e40af;
+
+  --success: #34d399;
+  --success-light: #082a21;
+  --success-border: #065f46;
+
+  --warning: #fbbf24;
+  --warning-light: #2b2210;
+  --warning-border: #92400e;
+
+  --danger: #f87171;
+  --danger-light: #2c0f10;
+  --danger-border: #991b1b;
+
+  --purple: #a78bfa;
+  --purple-light: #241a3e;
+  --purple-border: #5b21b6;
+
+  --cyan: #22d3ee;
+  --cyan-light: #0a2a33;
+  --cyan-border: #155e75;
+
+  --indigo: #818cf8;
+  --indigo-light: #1e2140;
+  --indigo-border: #4338ca;
+
+  /* Elevation Shadows — deeper on dark surfaces */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.35), 0 1px 2px -1px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.45), 0 4px 6px -4px rgba(0, 0, 0, 0.35);
+  --shadow-card: 0 2px 4px 0 rgba(0, 0, 0, 0.25), 0 1px 2px -1px rgba(0, 0, 0, 0.3);
+}
+
+/* Dark fixes for the few hard-coded light colors in the design system */
+
+html[data-theme="dark"] .user-avatar {
+  background: linear-gradient(135deg, #312e81, #1e1b4b);
+  color: #c7d2fe;
+  border-color: #3730a3;
+}
+
+html[data-theme="dark"] .app-sidebar.collapsed .nav-item[data-tooltip]:hover::after,
+html[data-theme="dark"] .app-sidebar.collapsed .sidebar-status-card[data-tooltip]:hover::after,
+html[data-theme="dark"] .app-sidebar.collapsed .sidebar-user[data-tooltip]:hover::after {
+  background: #334155;
+  color: #f8fafc;
+}
+
+html[data-theme="dark"] .app-sidebar.collapsed .nav-item[data-tooltip]:hover::before,
+html[data-theme="dark"] .app-sidebar.collapsed .sidebar-status-card[data-tooltip]:hover::before,
+html[data-theme="dark"] .app-sidebar.collapsed .sidebar-user[data-tooltip]:hover::before {
+  border-right-color: #334155;
+}
+
+html[data-theme="dark"] .insights-table thead {
+  background: var(--bg-surface-alt);
+}
+
+html[data-theme="dark"] .insights-table tbody tr:hover {
+  background-color: var(--bg-surface-alt);
+}
+
+html[data-theme="dark"] .filter-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+}
+
+html[data-theme="dark"] .btn-primary,
+html[data-theme="dark"] .btn-filter-apply {
+  color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+

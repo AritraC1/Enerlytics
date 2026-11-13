@@ -49,8 +49,20 @@
     return window.innerWidth <= 768;
   }
 
+  // Chart chrome colors are picked from the active theme (light default).
+  // Charts re-render via the "theme-change" event when the mode is toggled.
+  function chartTheme() {
+    var dark = document.documentElement.getAttribute("data-theme") === "dark";
+    return {
+      legendLabel: dark ? "#cbd5e1" : "#475569",
+      tick: dark ? "#94a3b8" : "#64748b",
+      grid: dark ? "rgba(51, 65, 85, 0.7)" : "rgba(226, 232, 240, 0.7)"
+    };
+  }
+
   function baseOptions() {
     var mobile = isMobileView();
+    var theme = chartTheme();
     return {
       responsive: true,
       maintainAspectRatio: false,
@@ -63,7 +75,7 @@
           display: true,
           position: "bottom",
           labels: {
-            color: "#475569",
+            color: theme.legendLabel,
             font: {
               family: "'Inter', -apple-system, sans-serif",
               size: mobile ? 10 : 11,
@@ -94,16 +106,17 @@
 
   function axisOptions() {
     var mobile = isMobileView();
+    var theme = chartTheme();
     return {
       scales: {
         x: {
           beginAtZero: true,
           grid: {
-            color: "rgba(226, 232, 240, 0.7)",
+            color: theme.grid,
             drawBorder: false
           },
           ticks: {
-            color: "#64748b",
+            color: theme.tick,
             autoSkip: true,
             maxRotation: mobile ? 45 : 0,
             font: {
@@ -115,11 +128,11 @@
         y: {
           beginAtZero: true,
           grid: {
-            color: "rgba(226, 232, 240, 0.7)",
+            color: theme.grid,
             drawBorder: false
           },
           ticks: {
-            color: "#64748b",
+            color: theme.tick,
             font: {
               family: "'Inter', -apple-system, sans-serif",
               size: mobile ? 9 : 11
@@ -170,17 +183,18 @@
 
     if (spec.horizontal) {
       var mobile = isMobileView();
+      var theme = chartTheme();
       options.indexAxis = "y";
       options.scales = {
         x: {
           beginAtZero: true,
-          grid: { color: "rgba(226, 232, 240, 0.7)", drawBorder: false },
-          ticks: { color: "#64748b", font: { size: mobile ? 9 : 11 } }
+          grid: { color: theme.grid, drawBorder: false },
+          ticks: { color: theme.tick, font: { size: mobile ? 9 : 11 } }
         },
         y: {
           beginAtZero: true,
           grid: { display: false },
-          ticks: { color: "#64748b", autoSkip: false, font: { size: mobile ? 9 : 11 } }
+          ticks: { color: theme.tick, autoSkip: false, font: { size: mobile ? 9 : 11 } }
         }
       };
     }
@@ -255,6 +269,7 @@
   }
 
   function buildScatter(spec) {
+    var theme = chartTheme();
     var options = baseOptions();
     options.plugins.legend = { display: false };
     options.scales = {
@@ -262,23 +277,23 @@
         title: {
           display: true,
           text: "Intensity",
-          color: "#475569",
+          color: theme.tick,
           font: { weight: "600", size: 11 }
         },
         beginAtZero: true,
-        grid: { color: "rgba(226, 232, 240, 0.7)", drawBorder: false },
-        ticks: { color: "#64748b" }
+        grid: { color: theme.grid, drawBorder: false },
+        ticks: { color: theme.tick }
       },
       y: {
         title: {
           display: true,
           text: "Likelihood",
-          color: "#475569",
+          color: theme.tick,
           font: { weight: "600", size: 11 }
         },
         beginAtZero: true,
-        grid: { color: "rgba(226, 232, 240, 0.7)", drawBorder: false },
-        ticks: { color: "#64748b" }
+        grid: { color: theme.grid, drawBorder: false },
+        ticks: { color: theme.tick }
       }
     };
 
@@ -364,6 +379,11 @@
 
   window.addEventListener("sidebar-toggle", handleResize);
   window.addEventListener("resize", handleResize);
+
+  // Re-render charts with the new palette when the light/dark mode is toggled
+  window.addEventListener("theme-change", function () {
+    renderAll();
+  });
 
   document.addEventListener("DOMContentLoaded", renderAll);
   document.addEventListener("htmx:afterSettle", renderAll);

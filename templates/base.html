@@ -30,6 +30,17 @@
     })();
   </script>
 
+  <!-- Prevent FOUC: Apply saved theme before render (default: light) -->
+  <script>
+    (function() {
+      try {
+        if (localStorage.getItem('enerlytics_theme') === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
   {% block head %}{% endblock %}
 </head>
 <body>
@@ -175,6 +186,17 @@
         </div>
 
         <div class="topbar-right">
+          <!-- Light / Dark Mode Toggler (sun = light, moon = dark; default: light) -->
+          <button type="button" id="theme-toggle-btn" class="theme-toggle-btn" aria-label="Toggle dark mode" title="Switch to dark mode" aria-pressed="false">
+            <svg class="theme-icon icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="4" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41" />
+            </svg>
+            <svg class="theme-icon icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+          </button>
+
           <button type="button" id="export-table-csv-btn" class="topbar-action-btn" title="Download insights as CSV" aria-label="Export CSV">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;">
               <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
