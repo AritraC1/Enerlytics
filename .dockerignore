@@ -8,3 +8,4 @@ db.sqlite3
 staticfiles/
 ml/artifacts/
 .DS_Store
+ml/notebooks
