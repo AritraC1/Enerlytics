@@ -45,10 +45,16 @@
     return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
   }
 
+  function isMobileView() {
+    return window.innerWidth <= 768;
+  }
+
   function baseOptions() {
+    var mobile = isMobileView();
     return {
       responsive: true,
       maintainAspectRatio: false,
+      resizeDelay: 50,
       font: {
         family: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
       },
@@ -60,21 +66,23 @@
             color: "#475569",
             font: {
               family: "'Inter', -apple-system, sans-serif",
-              size: 11,
+              size: mobile ? 10 : 11,
               weight: "500"
             },
-            padding: 14,
+            padding: mobile ? 8 : 14,
             usePointStyle: true,
-            pointStyle: "circle"
+            pointStyle: "circle",
+            boxWidth: mobile ? 6 : 8,
+            boxHeight: mobile ? 6 : 8
           }
         },
         tooltip: {
           backgroundColor: "#0f172a",
           titleColor: "#ffffff",
           bodyColor: "#f8fafc",
-          titleFont: { weight: "600", size: 12 },
-          bodyFont: { size: 11 },
-          padding: 10,
+          titleFont: { weight: "600", size: mobile ? 11 : 12 },
+          bodyFont: { size: mobile ? 10 : 11 },
+          padding: mobile ? 8 : 10,
           cornerRadius: 8,
           boxPadding: 4,
           borderColor: "#334155",
@@ -85,6 +93,7 @@
   }
 
   function axisOptions() {
+    var mobile = isMobileView();
     return {
       scales: {
         x: {
@@ -95,9 +104,11 @@
           },
           ticks: {
             color: "#64748b",
+            autoSkip: true,
+            maxRotation: mobile ? 45 : 0,
             font: {
               family: "'Inter', -apple-system, sans-serif",
-              size: 11
+              size: mobile ? 9 : 11
             }
           }
         },
@@ -111,7 +122,7 @@
             color: "#64748b",
             font: {
               family: "'Inter', -apple-system, sans-serif",
-              size: 11
+              size: mobile ? 9 : 11
             }
           }
         }
@@ -158,17 +169,18 @@
     };
 
     if (spec.horizontal) {
+      var mobile = isMobileView();
       options.indexAxis = "y";
       options.scales = {
         x: {
           beginAtZero: true,
           grid: { color: "rgba(226, 232, 240, 0.7)", drawBorder: false },
-          ticks: { color: "#64748b", font: { size: 11 } }
+          ticks: { color: "#64748b", font: { size: mobile ? 9 : 11 } }
         },
         y: {
           beginAtZero: true,
           grid: { display: false },
-          ticks: { color: "#64748b", font: { size: 11 } }
+          ticks: { color: "#64748b", autoSkip: false, font: { size: mobile ? 9 : 11 } }
         }
       };
     }
@@ -181,10 +193,11 @@
   }
 
   function buildDoughnut(spec) {
+    var mobile = isMobileView();
     var options = baseOptions();
-    options.cutout = "68%";
-    options.plugins.legend.position = "right";
-    options.plugins.legend.labels.padding = 10;
+    options.cutout = mobile ? "60%" : "68%";
+    options.plugins.legend.position = mobile ? "bottom" : "right";
+    options.plugins.legend.labels.padding = mobile ? 8 : 10;
 
     var colors = spec.labels.map(function (_, i) {
       return PALETTE[i % PALETTE.length];
@@ -286,12 +299,33 @@
     };
   }
 
+  function destroyAll() {
+    if (typeof Chart === "undefined") return;
+    Object.keys(Chart.instances || {}).forEach(function (key) {
+      try {
+        if (Chart.instances[key]) {
+          Chart.instances[key].destroy();
+        }
+      } catch (err) {}
+    });
+  }
+
   function render(spec) {
     var canvas = document.getElementById("chart-" + spec.id);
     if (!canvas || typeof Chart === "undefined") return;
 
     var existing = Chart.getChart(canvas);
-    if (existing) existing.destroy();
+    if (existing) {
+      try {
+        existing.destroy();
+      } catch (err) {}
+    }
+
+    // Chart.js writes inline width/height on the canvas while rendering.
+    // Clear them so a stale size from a previous render can never inflate the
+    // (fixed-height) container on re-render.
+    canvas.style.width = "";
+    canvas.style.height = "";
 
     var ctx = canvas.getContext("2d");
     var config = buildConfig(spec, ctx);
@@ -301,20 +335,32 @@
   }
 
   function renderAll() {
+    destroyAll();
     parseSpecs().forEach(render);
   }
 
-  // Handle smooth resize when sidebar collapses or expands
+  // Handle smooth resize when sidebar collapses/expands or window resizes
+  var resizeTimer = null;
   function handleResize() {
     if (typeof Chart === "undefined") return;
-    setTimeout(function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () {
       Object.keys(Chart.instances || {}).forEach(function (key) {
-        if (Chart.instances[key]) {
-          Chart.instances[key].resize();
+        var chart = Chart.instances[key];
+        if (chart && chart.canvas && chart.canvas.isConnected) {
+          chart.resize();
         }
       });
-    }, 260);
+    }, 150);
   }
+
+  // Teardown previous chart instances before HTMX swaps new DOM in
+  document.addEventListener("htmx:beforeSwap", function (evt) {
+    var target = evt.detail && evt.detail.target;
+    if (target && (target.id === "dashboard-content" || target.closest("#dashboard-content"))) {
+      destroyAll();
+    }
+  });
 
   window.addEventListener("sidebar-toggle", handleResize);
   window.addEventListener("resize", handleResize);

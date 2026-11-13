@@ -15,7 +15,7 @@
 
   <div class="chart-grid">
     {% for chart in charts %}
-      <div class="chart-card {% if chart.id == 'risk' %}chart-span-12{% elif chart.id == 'sector' %}chart-span-7{% elif chart.id == 'pestle' %}chart-span-5{% else %}chart-span-6{% endif %}">
+      <div class="chart-card {% if chart.id == 'risk' %}chart-span-12{% else %}chart-span-6{% endif %}">
         <div class="chart-card-header">
           <div class="chart-card-title">
             {% if chart.id == 'sector' %}

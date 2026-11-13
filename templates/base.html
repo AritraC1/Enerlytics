@@ -3,7 +3,8 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
   <title>{% block title %}Enerlytics — Global Energy Intelligence{% endblock %}</title>
 
   <!-- Google Font: Inter for crisp, modern typography -->
@@ -152,6 +153,9 @@
       </div>
     </aside>
 
+    <!-- Mobile Sidebar Backdrop Overlay -->
+    <div id="sidebar-backdrop" class="sidebar-backdrop" aria-hidden="true"></div>
+
     <!-- MAIN APP WRAPPER -->
     <div class="main-wrapper">
       <!-- Top Bar / Header -->
@@ -171,18 +175,18 @@
         </div>
 
         <div class="topbar-right">
-          <button type="button" id="export-table-csv-btn" class="topbar-action-btn" title="Download insights as CSV">
+          <button type="button" id="export-table-csv-btn" class="topbar-action-btn" title="Download insights as CSV" aria-label="Export CSV">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;">
               <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
             </svg>
-            <span>Export CSV</span>
+            <span class="btn-text">Export CSV</span>
           </button>
 
-          <a href="{% url 'dashboard:index' %}" class="topbar-action-btn" title="Refresh dashboard data">
+          <a href="{% url 'dashboard:index' %}" class="topbar-action-btn" title="Refresh dashboard data" aria-label="Refresh dashboard">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;">
               <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
-            <span>Refresh</span>
+            <span class="btn-text">Refresh</span>
           </a>
         </div>
       </header>
