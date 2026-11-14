@@ -30,7 +30,14 @@ RUN SECRET_KEY=build-only DATABASE_URL=sqlite:////tmp/build.db \
 
 # Run as a non-root user
 RUN useradd --system --no-create-home app
+# Directories the app must be able to write to at runtime: the ML artifacts
+# (trained on first boot by the entrypoint) and collectstatic output.
+RUN mkdir -p ml/artifacts staticfiles && chown -R app:app ml/artifacts staticfiles
 USER app
+
+# Prepare the database, import data, train the model if missing — then exec CMD.
+COPY --chmod=755 docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+ENTRYPOINT ["docker-entrypoint.sh"]
 
 EXPOSE 8000
 CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]

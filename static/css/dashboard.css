@@ -1848,6 +1848,10 @@ html[data-theme="dark"] .btn-filter-apply {
   font-variant-numeric: tabular-nums;
 }
 
+.metrics-table-card {
+  margin-bottom: 24px;
+}
+
 .metrics-note {
   padding: 14px 18px;
   background: var(--bg-surface-alt);
