@@ -1,5 +1,5 @@
 # Match this to `requires-python` / .python-version in pyproject.toml
-FROM python:3.12-slim
+FROM python:3.14-slim
 
 # Install uv by copying the binary from its official image
 # (pin a version instead of :latest once you're happy with the setup)
