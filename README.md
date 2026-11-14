@@ -43,11 +43,6 @@ python manage.py runserver
 ```
 Without a `DATABASE_URL`, Django falls back to the local `db.sqlite3`.
 
-## Demo
-| Light Mode | Dark Mode |
-|------------|-----------|
-| ![Light Mode](static/images/Lightmode.png) | ![Dark Mode](static/images/Darkmode.png) |
-
 ## Dashboard Features
 
 ### Key Performance Indicators (KPIs)
