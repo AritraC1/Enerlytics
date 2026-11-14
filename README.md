@@ -135,7 +135,7 @@ enerlytics/
 
 ## Testing
 ```bash
-pytest
+uv run pytest
 ```
 
 ## Key Takeaways
