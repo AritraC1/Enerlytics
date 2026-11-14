@@ -1,8 +1,6 @@
 services:
   db:
-    # pgvector build of Postgres: identical to postgres:17 plus the vector
-    # extension, so it's ready for the RAG features later.
-    image: pgvector/pgvector:pg17
+    image: postgres:17
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}

@@ -17,7 +17,7 @@ The dashboard is designed as a **single-page BI view** with logical sections for
 - **Backend:** Django (Python 3.14+)
 - **Frontend:** Django Templates + HTMX (partial page swaps, no SPA framework)
 - **Charts & Visualizations:** Chart.js
-- **Database:** PostgreSQL 17 with pgvector (via Docker), with automatic SQLite fallback for local runs
+- **Database:** PostgreSQL 17 (via Docker), with automatic SQLite fallback for local runs
 - **Data Loading:** Django management command (`import_insights`) that cleans and loads `data/jsondata.json`
 - **Styling / Performance:** WhiteNoise for static files, Gunicorn as the production server
 - **Machine Learning:** scikit-learn (LinearSVC + TF-IDF), pandas, joblib
@@ -31,7 +31,7 @@ The dashboard is designed as a **single-page BI view** with logical sections for
 cp .env.example .env    # fill in Postgres credentials
 docker compose up --build
 ```
-The app runs at http://localhost:8000 and connects to the bundled `pgvector/pgvector:pg17` database service automatically. The container entrypoint handles the first boot for you: it runs migrations, imports the dataset, and trains the PESTLE model if its artifact is missing — then starts Gunicorn.
+> The app runs at http://localhost:8000 and connects to the bundled `postgres:17` database service automatically. The container entrypoint handles the first boot for you: it runs migrations, imports the dataset, and trains the PESTLE model if its artifact is missing — then starts Gunicorn.
 
 ### Option 2: Local development (SQLite fallback)
 ```bash
@@ -130,7 +130,7 @@ enerlytics/
 ├── templates/         # Base template (HTMX + Chart.js)
 ├── Dockerfile         # Production container build
 ├── docker-entrypoint.sh # First-boot setup: migrate, import data, train model
-└── docker-compose.yml # Web + Postgres (pgvector) services
+└── docker-compose.yml # Web + Postgres services
 ```
 
 ## Testing

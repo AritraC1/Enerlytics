@@ -25,7 +25,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-dev
 
 # 3) Collect static files (dummy values: settings only need to import)
-RUN SECRET_KEY=build-only DATABASE_URL=sqlite:////tmp/build.db \
+RUN DJANGO_SECRET_KEY=build-only DATABASE_URL=sqlite:////tmp/build.db \
     python manage.py collectstatic --noinput
 
 # Run as a non-root user
