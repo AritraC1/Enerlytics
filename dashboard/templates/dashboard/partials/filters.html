@@ -17,7 +17,9 @@
         hx-get="{% url 'dashboard:filtered' %}"
         hx-target="#dashboard-content"
         hx-swap="outerHTML"
-        hx-trigger="change from find select delay:150ms, submit"
+        {# NOTE: `from:` needs the colon — `from find select` (space, no colon) is
+           invalid htmx trigger syntax and fires htmx:syntax:error on every load. #}
+        hx-trigger="change from:find select delay:150ms, submit"
         hx-push-url="true">
     <div class="filter-fields-grid">
       {% for field in form %}

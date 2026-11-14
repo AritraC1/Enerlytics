@@ -170,10 +170,15 @@
       e.preventDefault();
       var next = currentTheme() === "dark" ? "light" : "dark";
 
-      // Anchor the slide-in reveal at the toggler itself
+      // Anchor the slide-in reveal at the toggler itself, in VIEWPORT
+      // coordinates. View-transition pseudo-elements (::view-transition-new(root))
+      // live in the snapshot's coordinate space, which is fixed to the viewport
+      // and does NOT scroll — adding scrollX/scrollY here shifted the circle
+      // origin below the viewport on scrolled pages, so the theme appeared to
+      // slide in from the bottom (KPIs/charts/table) instead of the icon.
       var rect = btn.getBoundingClientRect();
-      var x = rect.left + rect.width / 2 + window.scrollX;
-      var y = rect.top + rect.height / 2 + window.scrollY;
+      var x = rect.left + rect.width / 2;
+      var y = rect.top + rect.height / 2;
       document.documentElement.style.setProperty("--theme-toggle-x", x + "px");
       document.documentElement.style.setProperty("--theme-toggle-y", y + "px");
 

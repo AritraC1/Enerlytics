@@ -325,7 +325,7 @@
     });
   }
 
-  function render(spec) {
+  function render(spec, skipAnimation) {
     var canvas = document.getElementById("chart-" + spec.id);
     if (!canvas || typeof Chart === "undefined") return;
 
@@ -346,12 +346,23 @@
     var config = buildConfig(spec, ctx);
     if (!config) return;
 
+    // Theme-change re-renders happen inside the View Transitions update
+    // callback: the browser captures the "new" snapshot the moment the
+    // callback returns, and Chart.js's first (animated) frame would not be
+    // painted yet. Disabling animation makes Chart.js draw synchronously, so
+    // the snapshot shows fully rendered charts in the new palette.
+    if (skipAnimation && config.options) {
+      config.options.animation = false;
+    }
+
     new Chart(canvas, config);
   }
 
-  function renderAll() {
+  function renderAll(skipAnimation) {
     destroyAll();
-    parseSpecs().forEach(render);
+    parseSpecs().forEach(function (spec) {
+      render(spec, skipAnimation);
+    });
   }
 
   // Handle smooth resize when sidebar collapses/expands or window resizes
@@ -380,9 +391,11 @@
   window.addEventListener("sidebar-toggle", handleResize);
   window.addEventListener("resize", handleResize);
 
-  // Re-render charts with the new palette when the light/dark mode is toggled
+  // Re-render charts with the new palette when the light/dark mode is toggled.
+  // skipAnimation=true so the canvases are painted synchronously and the
+  // view-transition snapshot captures them fully rendered.
   window.addEventListener("theme-change", function () {
-    renderAll();
+    renderAll(true);
   });
 
   document.addEventListener("DOMContentLoaded", renderAll);
