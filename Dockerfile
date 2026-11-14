@@ -29,7 +29,10 @@ RUN DJANGO_SECRET_KEY=build-only DATABASE_URL=sqlite:////tmp/build.db \
     python manage.py collectstatic --noinput
 
 # Run as a non-root user
-RUN useradd --system --no-create-home app
+RUN useradd --system --no-create-home --home-dir /home/app app
+# gunicorn's control server reads the user's home directory; it must exist
+# and be writable by the app user.
+RUN mkdir -p /home/app && chown -R app:app /home/app
 # Directories the app must be able to write to at runtime: the ML artifacts
 # (trained on first boot by the entrypoint) and collectstatic output.
 RUN mkdir -p ml/artifacts staticfiles && chown -R app:app ml/artifacts staticfiles
