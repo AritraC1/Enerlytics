@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Enerlytics — Predict PESTLE Category{% endblock %}
+
+{% block content %}
+  <div class="dashboard-page-header">
+    <div class="header-title-group">
+      <h1>Predict PESTLE Category</h1>
+      <p>Type an insight title and the model will classify it into a PESTLE axis, with confidence for its top three candidates.</p>
+    </div>
+    <div class="header-quick-meta">
+      <span class="topbar-chip">
+        <span class="chip-dot"></span>
+        <span>Trained on 1,000 curated records</span>
+      </span>
+    </div>
+  </div>
+
+  <div class="predict-layout">
+    <section class="chart-card predict-form-card">
+      <div class="chart-card-header">
+        <h2 class="chart-card-title">Insight title</h2>
+        <span class="chart-type-badge">ML</span>
+      </div>
+      <form
+        method="post"
+        action="{% url 'dashboard:predict' %}"
+        hx-post="{% url 'dashboard:predict' %}"
+        hx-target="#prediction-result"
+        hx-swap="innerHTML"
+      >
+        {% csrf_token %}
+        {{ form.title.label_tag }}
+        {{ form.title }}
+        <p class="predict-hint">At least 3 characters. The model only sees the title — the other features are left as neutral defaults.</p>
+        {% if form.title.errors %}
+          <p class="filter-error" role="alert">{{ form.title.errors.0 }}</p>
+        {% endif %}
+        <button type="submit" class="btn-filter-apply">Predict</button>
+      </form>
+    </section>
+
+    <section id="prediction-result" class="predict-result-slot" aria-live="polite">
+      {# Server-rendered result for no-JS / full-page POSTs; HTMX swaps this #}
+      {# fragment in after each submit without a page reload. #}
+      {% if result %}
+        {% include "dashboard/partials/prediction_result.html" with result=result input_title=form.cleaned_data.title %}
+      {% else %}
+        <div class="predict-empty">
+          <p>Submit a title to see the predicted PESTLE category here.</p>
+        </div>
+      {% endif %}
+    </section>
+  </div>
+{% endblock %}

@@ -1646,3 +1646,253 @@ html[data-theme="dark"] .btn-filter-apply {
 }
 
 
+
+/* ==========================================================================
+   Predict page (PESTLE classification form + result fragment)
+   ========================================================================== */
+
+.predict-layout {
+  display: grid;
+  grid-template-columns: minmax(320px, 420px) 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.predict-form-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.predict-form-card label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.predict-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.predict-input:focus {
+  outline: none;
+  border-color: var(--primary-border);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.predict-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.predict-result-slot {
+  min-height: 120px;
+}
+
+.predict-empty {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 28px 24px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.predict-empty code {
+  background: var(--bg-surface-alt);
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.predict-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.predict-caption {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.predict-label {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.confidence-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.confidence-row {
+  display: grid;
+  grid-template-columns: 110px 1fr 56px;
+  align-items: center;
+  gap: 12px;
+}
+
+.confidence-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.confidence-bar-track {
+  display: block;
+  height: 10px;
+  background: var(--bg-surface-alt);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.confidence-bar {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.4s ease;
+}
+
+.confidence-bar-top { background: linear-gradient(90deg, var(--primary), #60a5fa); }
+.confidence-bar-alt { background: var(--border-strong); }
+
+.confidence-value {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.predict-warning {
+  margin-top: 18px;
+  padding: 12px 14px;
+  background: var(--warning-light);
+  border: 1px solid var(--warning-border);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.55;
+}
+
+.predict-error-card {
+  border-color: var(--danger-border);
+}
+
+@media (max-width: 900px) {
+  .predict-layout { grid-template-columns: 1fr; }
+}
+
+/* ==========================================================================
+   Model metrics page
+   ========================================================================== */
+
+.metrics-score-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.metrics-facts-grid {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) 2fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.metrics-fact-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.metrics-fact-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 0.9rem;
+}
+
+.metrics-fact-list li:last-child { border-bottom: none; }
+
+.metrics-fact-list span { color: var(--text-muted); }
+
+.metrics-fact-list strong {
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.metrics-note {
+  padding: 14px 18px;
+  background: var(--bg-surface-alt);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  line-height: 1.65;
+}
+
+.matrix-caption {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.metrics-table td,
+.metrics-table th {
+  font-variant-numeric: tabular-nums;
+}
+
+.matrix-table td {
+  text-align: right;
+}
+
+.matrix-table thead th,
+.matrix-table tbody tr > th {
+  font-size: 0.72rem;
+}
+
+.matrix-table td.matrix-diagonal { color: var(--success); font-weight: 700; }
+.matrix-table td.matrix-miss { color: var(--danger); font-weight: 600; }
+
+@media (max-width: 900px) {
+  .metrics-facts-grid { grid-template-columns: 1fr; }
+}
+
+/* Dark mode adjustments for the new pages */
+html[data-theme="dark"] .predict-input { background: var(--bg-surface-alt); }
+
+html[data-theme="dark"] .confidence-bar-alt { background: var(--border-color); }
+
+html[data-theme="dark"] .predict-warning {
+  background: rgba(245, 158, 11, 0.08);
+}
+
+html[data-theme="dark"] .metrics-note {
+  background: var(--bg-surface-alt);
+}

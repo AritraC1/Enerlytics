@@ -1,0 +1,199 @@
+{
+  "random_state": 42,
+  "n_rows": 907,
+  "n_duplicate_titles": 0,
+  "n_train": 725,
+  "n_test": 182,
+  "cv_accuracy_mean": 0.7172413793103448,
+  "cv_accuracy_std": 0.009753196981883434,
+  "cv_macro_f1_mean": 0.4423261516151854,
+  "cv_macro_f1_std": 0.05929445621222945,
+  "accuracy": 0.7142857142857143,
+  "macro_f1": 0.6396542512154062,
+  "classification_report": "               precision    recall  f1-score   support\n\n     Economic      0.736     0.803     0.768        66\nEnvironmental      0.562     0.600     0.581        15\n   Healthcare      0.000     0.000     0.000         0\n   Industries      0.718     0.812     0.762        69\n   Lifestyles      1.000     1.000     1.000         1\n Organization      1.000     0.500     0.667         2\n    Political      0.778     0.350     0.483        20\n       Social      0.500     0.200     0.286         5\nTechnological      0.667     0.500     0.571         4\n\n     accuracy                          0.714       182\n    macro avg      0.662     0.529     0.569       182\n weighted avg      0.716     0.714     0.702       182\n",
+  "per_class_report": {
+    "Economic": {
+      "precision": 0.7361111111111112,
+      "recall": 0.803030303030303,
+      "f1-score": 0.7681159420289855,
+      "support": 66.0
+    },
+    "Environmental": {
+      "precision": 0.5625,
+      "recall": 0.6,
+      "f1-score": 0.5806451612903226,
+      "support": 15.0
+    },
+    "Healthcare": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 0.0
+    },
+    "Industries": {
+      "precision": 0.717948717948718,
+      "recall": 0.8115942028985508,
+      "f1-score": 0.7619047619047619,
+      "support": 69.0
+    },
+    "Lifestyles": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 1.0
+    },
+    "Organization": {
+      "precision": 1.0,
+      "recall": 0.5,
+      "f1-score": 0.6666666666666666,
+      "support": 2.0
+    },
+    "Political": {
+      "precision": 0.7777777777777778,
+      "recall": 0.35,
+      "f1-score": 0.4827586206896552,
+      "support": 20.0
+    },
+    "Social": {
+      "precision": 0.5,
+      "recall": 0.2,
+      "f1-score": 0.2857142857142857,
+      "support": 5.0
+    },
+    "Technological": {
+      "precision": 0.6666666666666666,
+      "recall": 0.5,
+      "f1-score": 0.5714285714285714,
+      "support": 4.0
+    },
+    "accuracy": 0.7142857142857143,
+    "macro avg": {
+      "precision": 0.6623338081671415,
+      "recall": 0.5294027228809838,
+      "f1-score": 0.5685815566359165,
+      "support": 182.0
+    },
+    "weighted avg": {
+      "precision": 0.7158325115055884,
+      "recall": 0.7142857142857143,
+      "f1-score": 0.7015359869566408,
+      "support": 182.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      53,
+      2,
+      0,
+      10,
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    [
+      2,
+      9,
+      0,
+      4,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      9,
+      3,
+      0,
+      56,
+      0,
+      0,
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0
+    ],
+    [
+      7,
+      1,
+      0,
+      5,
+      0,
+      0,
+      7,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      3,
+      0,
+      0,
+      1,
+      1,
+      0
+    ],
+    [
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      2
+    ]
+  ],
+  "classes": [
+    "Economic",
+    "Environmental",
+    "Healthcare",
+    "Industries",
+    "Lifestyles",
+    "Organization",
+    "Political",
+    "Social",
+    "Technological"
+  ],
+  "baseline_accuracy": 0.3791208791208791,
+  "baseline_macro_f1": 0.06872509960159362,
+  "trained_at": "2026-11-14T07:17:24+00:00",
+  "model_file": "pestle_pipeline.joblib"
+}

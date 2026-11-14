@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block title %}Enerlytics — Model Metrics{% endblock %}
+
+{% block content %}
+  <div class="dashboard-page-header">
+    <div class="header-title-group">
+      <h1>Model Metrics</h1>
+      <p>How well the PESTLE classifier really works — scored once on a held-out test set, against a majority-class baseline.</p>
+    </div>
+    <div class="header-quick-meta">
+      <span class="topbar-chip">
+        <span class="chip-dot"></span>
+        <span>LinearSVC • held-out test split</span>
+      </span>
+    </div>
+  </div>
+
+  {% if not metrics %}
+    <section class="chart-card">
+      <div class="predict-empty">
+        <p>No metrics file yet. Train the model with <code>uv run python manage.py train_model</code> to generate <code>ml/artifacts/metrics.json</code>.</p>
+      </div>
+    </section>
+  {% else %}
+    {# Headline scores: baseline vs model, side by side. #}
+    <section class="metrics-score-grid">
+      <div class="kpi-card kpi-blue">
+        <div class="kpi-card-top">
+          <span class="kpi-label">Baseline accuracy</span>
+        </div>
+        <div class="kpi-value">{{ metrics.baseline_accuracy|floatformat:3 }}</div>
+        <div class="kpi-context-pill"><span>Always guesses the most common class</span></div>
+      </div>
+      <div class="kpi-card kpi-emerald">
+        <div class="kpi-card-top">
+          <span class="kpi-label">Model accuracy</span>
+        </div>
+        <div class="kpi-value">{{ metrics.accuracy|floatformat:3 }}</div>
+        <div class="kpi-context-pill"><span>Held-out test split • {{ metrics.n_test }} rows</span></div>
+      </div>
+      <div class="kpi-card kpi-purple">
+        <div class="kpi-card-top">
+          <span class="kpi-label">Baseline macro-F1</span>
+        </div>
+        <div class="kpi-value">{{ metrics.baseline_macro_f1|floatformat:3 }}</div>
+        <div class="kpi-context-pill"><span>No real skill — expected</span></div>
+      </div>
+      <div class="kpi-card kpi-amber">
+        <div class="kpi-card-top">
+          <span class="kpi-label">Model macro-F1</span>
+        </div>
+        <div class="kpi-value">{{ metrics.macro_f1|floatformat:3 }}</div>
+        <div class="kpi-context-pill"><span>Unweighted mean across classes</span></div>
+      </div>
+    </section>
+
+    {# Training facts + data limits. #}
+    <section class="metrics-facts-grid">
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <h2 class="chart-card-title">Training facts</h2>
+        </div>
+        <ul class="metrics-fact-list">
+          <li><span>Labelled rows</span><strong>{{ metrics.n_rows }}</strong></li>
+          <li>
+            <span>Duplicate titles collapsed</span>
+            <strong>{{ metrics.n_duplicate_titles|default:0 }}</strong>
+          </li>
+          <li><span>Training split</span><strong>{{ metrics.n_train }}</strong></li>
+          <li><span>Test split</span><strong>{{ metrics.n_test }}</strong></li>
+          <li><span>Classes</span><strong>{{ metrics.classes|length }}</strong></li>
+          <li>
+            <span>Date trained</span>
+            <strong>{% if trained_at %}{{ trained_at|date:"j M Y, H:i" }} UTC{% else %}unknown{% endif %}</strong>
+          </li>
+          <li>
+            <span>Cross-validated accuracy</span>
+            <strong>{{ metrics.cv_accuracy_mean|floatformat:3 }} ±{{ metrics.cv_accuracy_std|floatformat:3 }}</strong>
+          </li>
+        </ul>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <h2 class="chart-card-title">Limits of the data</h2>
+        </div>
+        <p class="metrics-note">
+          The model was trained on 1,000 curated records, of which 907 carried a
+          PESTLE label — a small dataset by machine-learning standards. The
+          classes are far from balanced: Economic and Industries dominate, while
+          Social, Organization, Lifestyles and Technological have only a handful
+          of examples, so their scores are fragile and the confusion matrix
+          confirms the model mostly confuses them with the big classes.
+          Confidences shown on the Predict page are softmax-normalized
+          decision scores from a LinearSVC — relative rankings, not calibrated
+          probabilities. Finally, the data is a point-in-time snapshot of energy
+          news titles, so performance on fresh, differently-worded text is
+          untested.
+        </p>
+      </div>
+    </section>
+
+    {# Per-class report. #}
+    <section class="chart-card metrics-table-card">
+      <div class="chart-card-header">
+        <h2 class="chart-card-title">Per-class scores (test split)</h2>
+      </div>
+      <div class="table-scroll">
+        <table class="insights-table metrics-table">
+          <thead>
+            <tr>
+              <th>Class</th><th>Precision</th><th>Recall</th><th>F1</th><th>Support</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in per_class %}
+              <tr>
+                <td>{{ row.label }}</td>
+                <td>{{ row.precision|floatformat:3 }}</td>
+                <td>{{ row.recall|floatformat:3 }}</td>
+                <td>{{ row.f1|floatformat:3 }}</td>
+                <td>{{ row.support }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    {# Confusion matrix: rows = true, columns = predicted. #}
+    <section class="chart-card metrics-table-card">
+      <div class="chart-card-header">
+        <h2 class="chart-card-title">Confusion matrix <span class="matrix-caption">(rows = true, columns = predicted)</span></h2>
+      </div>
+      <div class="table-scroll">
+        <table class="insights-table metrics-table matrix-table">
+          <thead>
+            <tr>
+              <th></th>
+              {% for label in labels %}<th>{{ label|slice:":4" }}</th>{% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for row_label, counts in matrix %}
+              <tr>
+                <th>{{ row_label }}</th>
+                {% for count in counts %}
+                  <td class="{% if forloop.counter0 == forloop.parentloop.counter0 %}matrix-diagonal{% elif count %}matrix-miss{% endif %}">{{ count }}</td>
+                {% endfor %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% if top_confusion %}
+        <p class="metrics-note">
+          Most frequent misses:
+          {% for miss in top_confusion %}
+            {% if not forloop.first %}; {% endif %}{{ miss.true }} → {{ miss.predicted }} ({{ miss.count }}){% if forloop.last %}.{% endif %}
+          {% endfor %}
+        </p>
+      {% endif %}
+    </section>
+  {% endif %}
+{% endblock %}

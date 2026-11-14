@@ -1,0 +1,52 @@
+{# Result fragment for the Predict page — swapped in via HTMX (or rendered #}
+{# server-side for no-JS full-page POSTs). Context: result (ml.predict #}
+{# dict), optional input_title and form. #}
+
+{% if not result.available %}
+  <div class="chart-card predict-result-card predict-error-card" role="alert">
+    <div class="chart-card-header">
+      <h2 class="chart-card-title">Prediction unavailable</h2>
+    </div>
+    <div class="predict-empty">
+      <p>{{ result.error }}</p>
+      {% if "not trained" in result.error %}
+        <p class="predict-hint">Train it first with <code>uv run python manage.py train_model</code>.</p>
+      {% endif %}
+    </div>
+  </div>
+{% else %}
+  <div class="chart-card predict-result-card">
+    <div class="chart-card-header">
+      <h2 class="chart-card-title">
+        {% if input_title %}&ldquo;{{ input_title }}&rdquo;{% else %}Prediction{% endif %}
+      </h2>
+      <span class="chart-type-badge">LinearSVC</span>
+    </div>
+
+    <div class="predict-label-row">
+      <span class="predict-caption">Predicted category</span>
+      <span class="badge-pestle predict-label">{{ result.label }}</span>
+    </div>
+
+    <div class="confidence-list">
+      {% for entry in result.top %}
+        <div class="confidence-row">
+          <span class="confidence-label">{{ entry.label }}</span>
+          <span class="confidence-bar-track">
+            <span class="confidence-bar {% if forloop.first %}confidence-bar-top{% else %}confidence-bar-alt{% endif %}" style="width: {% widthratio entry.probability 1 100 %}%"></span>
+          </span>
+          <span class="confidence-value">{{ entry.probability|floatformat:3 }}</span>
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if result.probability < 0.5 %}
+      <div class="predict-warning" role="note">
+        <strong>Low confidence.</strong> The top score is only
+        {{ result.probability|floatformat:3 }} — the model is unsure, and these
+        scores are relative (uncalibrated) rather than true probabilities.
+        Treat the label as a hint, not an answer.
+      </div>
+    {% endif %}
+  </div>
+{% endif %}

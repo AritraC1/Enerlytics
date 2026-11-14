@@ -139,6 +139,25 @@
           </span>
           <span class="nav-text">Environmental</span>
         </a>
+
+        <div class="nav-section-title">Machine Learning</div>
+        <a href="{% url 'dashboard:predict' %}" class="nav-item {% if request.path == '/predict/' %}active{% endif %}" data-tooltip="Classify a title into a PESTLE axis">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.36 6.36l-.7-.7M6.34 6.34l-.7-.7m12.72 0l-.7.7M6.34 17.66l-.7.7M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+          </span>
+          <span class="nav-text">Predict</span>
+        </a>
+
+        <a href="{% url 'dashboard:model-metrics' %}" class="nav-item {% if request.path == '/model-metrics/' %}active{% endif %}" data-tooltip="How well the model works">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+          </span>
+          <span class="nav-text">Model metrics</span>
+        </a>
       </nav>
 
       <!-- Sidebar Bottom Info & Status -->
